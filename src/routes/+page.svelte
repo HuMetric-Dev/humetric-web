@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { postQuery, ApiError } from "$lib/api";
+  import { postQuery } from "$lib/api";
+  import { formatWebError } from "$lib/errors";
   import Feed from "$lib/components/Feed.svelte";
   import HistoryGutter from "$lib/components/HistoryGutter.svelte";
   import QueryInput from "$lib/components/QueryInput.svelte";
@@ -18,18 +19,16 @@
     pending = true;
     error = null;
     lastSubmitted = text;
-    try {
-      const r = await postQuery(text, inflight.signal);
-      results = r.results;
-    } catch (e) {
-      if (e instanceof DOMException && e.name === "AbortError") return;
-      if (e instanceof ApiError) error = e.message;
-      else error = e instanceof Error ? e.message : "request failed";
+    const r = await postQuery(text, inflight.signal);
+    pending = false;
+    inflight = null;
+    if (r.kind === "err") {
+      if (r.error.kind === "aborted") return;
+      error = formatWebError(r.error);
       results = [];
-    } finally {
-      pending = false;
-      inflight = null;
+      return;
     }
+    results = r.value.results;
   }
 
   function pickFromHistory(text: string) {

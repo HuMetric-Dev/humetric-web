@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getHistory } from "../api";
+  import { formatWebError } from "../errors";
   import type { HistoryItem } from "../types";
 
   type Props = { onpick: (text: string) => void };
@@ -13,14 +14,13 @@
   async function load() {
     loading = true;
     error = null;
-    try {
-      const r = await getHistory(20);
-      items = r.items;
-    } catch (e) {
-      error = e instanceof Error ? e.message : "history unavailable";
-    } finally {
-      loading = false;
+    const r = await getHistory(20);
+    loading = false;
+    if (r.kind === "err") {
+      if (r.error.kind !== "aborted") error = formatWebError(r.error);
+      return;
     }
+    items = r.value.items;
   }
 
   function handleEnter() {
