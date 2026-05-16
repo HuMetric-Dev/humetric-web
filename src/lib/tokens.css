@@ -1,0 +1,38 @@
+/* Locked Swiss-2026 design tokens.
+   Accent (--accent) appears in EXACTLY 3 places:
+     1. caret-color on the query input
+     2. the rank number on the active/hovered person card
+     3. the progress sweep line beneath the input while a query is in flight
+   If you find a fourth, remove one. */
+
+:root {
+  /* type */
+  --font-sans: "Switzer", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  --font-prose: "Erode", "Switzer", serif;
+
+  /* color — warm bone, near-black, single vermillion accent */
+  --bg: #fafaf7;
+  --surface: #f2f2ee;
+  --ink: #0a0a09;
+  --ink-2: #66665f;
+  --rule: #e5e5df;
+  --accent: #e0392f;
+
+  /* spacing — 8px baseline */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 16px;
+  --s-4: 24px;
+  --s-5: 32px;
+  --s-6: 48px;
+  --s-7: 64px;
+  --s-8: 96px;
+
+  /* layout */
+  --col-max: 720px;
+  --gutter: 64px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
