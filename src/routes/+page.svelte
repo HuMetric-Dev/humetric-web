@@ -1,6 +1,8 @@
 <script lang="ts">
   import { postQuery } from "$lib/api";
   import { formatWebError } from "$lib/errors";
+  import AccountChip from "$lib/components/AccountChip.svelte";
+  import ClaimPendingBanner from "$lib/components/ClaimPendingBanner.svelte";
   import Feed from "$lib/components/Feed.svelte";
   import HistoryGutter from "$lib/components/HistoryGutter.svelte";
   import QueryInput from "$lib/components/QueryInput.svelte";
@@ -41,9 +43,11 @@
 
 <header class="top">
   <span class="mark">humetric<span class="dot">.</span></span>
+  <AccountChip />
 </header>
 
 <main>
+  <ClaimPendingBanner />
   <div class="input-wrap">
     <QueryInput bind:value={queryText} {pending} onsubmit={submit} />
   </div>
@@ -69,8 +73,9 @@
     margin: 0 auto;
     padding: var(--s-5) var(--s-4) 0;
     display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
   }
 
   .mark {

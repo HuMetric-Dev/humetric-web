@@ -6,7 +6,16 @@ import {
   type WebError,
 } from "./errors";
 import { err, ok, type Result } from "./result";
-import type { ApiErrorBody, HistoryResponse, QueryResponse } from "./types";
+import type {
+  ApiErrorBody,
+  ClaimRequestDTO,
+  HistoryResponse,
+  LoginRequestDTO,
+  QueryResponse,
+  RegisterRequestDTO,
+  RegisterResponseDTO,
+  UserDTO,
+} from "./types";
 
 async function unwrap<T>(res: Response): Promise<Result<T, WebError>> {
   if (res.ok) {
@@ -38,8 +47,12 @@ async function send(
   input: string,
   init: RequestInit | undefined,
 ): Promise<Result<Response, WebError>> {
+  // Always include credentials so the humetric_session cookie rides on every
+  // request. HttpOnly + SameSite=Lax means JS can't read it, but it travels
+  // automatically with same-origin fetches once we opt in here.
+  const withCreds: RequestInit = { credentials: "include", ...(init ?? {}) };
   try {
-    return ok(await fetch(input, init));
+    return ok(await fetch(input, withCreds));
   } catch (e) {
     if (e instanceof DOMException && e.name === "AbortError") {
       return err(abortedError);
@@ -69,4 +82,68 @@ export async function getHistory(
   const res = await send(`/api/history?limit=${limit}`, { signal });
   if (res.kind === "err") return res;
   return unwrap<HistoryResponse>(res.value);
+}
+
+// --- auth ---------------------------------------------------------------
+// All auth endpoints set / read the humetric_session HttpOnly cookie. The
+// cookie travels because `send` sets credentials: "include" by default.
+
+export async function getMe(
+  signal?: AbortSignal,
+): Promise<Result<UserDTO, WebError>> {
+  const res = await send("/auth/me", { signal });
+  if (res.kind === "err") return res;
+  return unwrap<UserDTO>(res.value);
+}
+
+export async function postRegister(
+  req: RegisterRequestDTO,
+  signal?: AbortSignal,
+): Promise<Result<RegisterResponseDTO, WebError>> {
+  const res = await send("/auth/register", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(req),
+    signal,
+  });
+  if (res.kind === "err") return res;
+  return unwrap<RegisterResponseDTO>(res.value);
+}
+
+export async function postLogin(
+  req: LoginRequestDTO,
+  signal?: AbortSignal,
+): Promise<Result<UserDTO, WebError>> {
+  const res = await send("/auth/login", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(req),
+    signal,
+  });
+  if (res.kind === "err") return res;
+  return unwrap<UserDTO>(res.value);
+}
+
+export async function postLogout(
+  signal?: AbortSignal,
+): Promise<Result<null, WebError>> {
+  const res = await send("/auth/logout", { method: "POST", signal });
+  if (res.kind === "err") return res;
+  // 204 No Content — no body to parse.
+  if (res.value.status === 204) return ok(null);
+  return unwrap<null>(res.value);
+}
+
+export async function postClaimPerson(
+  req: ClaimRequestDTO,
+  signal?: AbortSignal,
+): Promise<Result<UserDTO, WebError>> {
+  const res = await send("/auth/claim-person", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(req),
+    signal,
+  });
+  if (res.kind === "err") return res;
+  return unwrap<UserDTO>(res.value);
 }

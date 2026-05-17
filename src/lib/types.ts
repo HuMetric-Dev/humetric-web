@@ -43,3 +43,41 @@ export type ApiErrorBody = {
   error: string;
   detail: string;
 };
+
+// --- auth ---------------------------------------------------------------
+// Mirror of humetric_api.auth_dtos. Keep in sync.
+
+export type UserDTO = {
+  id: string;
+  email: string;
+  display_name: string;
+  person_id: string | null;
+  claim_state: "linked" | "pending";
+  created_at: number;
+};
+
+export type RegisterRequestDTO = {
+  email: string;
+  password: string;
+  display_name: string;
+  github_username?: string | null;
+  linkedin_url?: string | null;
+};
+
+export type RegisterResponseDTO = {
+  user: UserDTO;
+  claim_state: "linked" | "pending";
+  candidates: PersonResult[];
+};
+
+export type LoginRequestDTO = {
+  email: string;
+  password: string;
+};
+
+export type ClaimRequestDTO = {
+  person_id?: string | null;
+  create_new?: boolean;
+  new_person_name?: string | null;
+  new_person_headline?: string | null;
+};

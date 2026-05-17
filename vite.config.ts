@@ -11,6 +11,11 @@ export default defineConfig({
         target: "http://localhost:8000",
         changeOrigin: false,
       },
+      // Auth routes are mounted at /auth/* on the API, not under /api.
+      "/auth": {
+        target: "http://localhost:8000",
+        changeOrigin: false,
+      },
     },
   },
 });
