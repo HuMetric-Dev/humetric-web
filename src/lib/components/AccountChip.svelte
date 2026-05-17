@@ -116,7 +116,7 @@
 
   .caret {
     color: var(--ink-2);
-    font-size: 9px;
+    font-size: 10px;
     transition: transform 160ms var(--ease-out);
   }
   .caret.open {

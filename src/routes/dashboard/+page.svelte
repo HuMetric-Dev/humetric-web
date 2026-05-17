@@ -111,25 +111,24 @@
 
   .title {
     font-family: var(--font-prose);
-    font-style: italic;
     font-weight: 400;
-    font-size: 40px;
-    line-height: 1.1;
+    font-size: 32px;
+    line-height: 1.15;
     color: var(--ink);
-    margin: 0;
+    margin: 0 0 var(--s-2);
     letter-spacing: -0.01em;
   }
 
   .subtitle {
-    margin: var(--s-2) 0 var(--s-7);
+    margin: 0 0 var(--s-6);
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 13px;
     color: var(--ink-2);
     line-height: 1.5;
   }
 
   .block {
-    margin-bottom: var(--s-7);
+    margin-bottom: var(--s-6);
   }
 
   .block-label {
