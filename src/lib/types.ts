@@ -24,10 +24,27 @@ export type PersonResult = {
   explanation: string;
 };
 
+export type OrgResult = {
+  rank: number;
+  org_id: string;
+  name: string;
+  headline: string;
+  location: string;
+  source: string;
+  raw_url: string;
+  org_kind: string;
+  score: number;
+  explanation: string;
+};
+
+export type EntityType = "person" | "organization";
+
 export type QueryResponse = {
   ts: number;
   parsed: ParsedQuery;
+  // `results` is the person block, kept under the old name for back-compat.
   results: PersonResult[];
+  organizations: OrgResult[];
 };
 
 export type HistoryItem = {

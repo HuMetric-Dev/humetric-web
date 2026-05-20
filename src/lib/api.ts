@@ -9,6 +9,7 @@ import { err, ok, type Result } from "./result";
 import type {
   ApiErrorBody,
   ClaimRequestDTO,
+  EntityType,
   HistoryResponse,
   LoginRequestDTO,
   QueryResponse,
@@ -63,12 +64,15 @@ async function send(
 
 export async function postQuery(
   text: string,
+  entityTypes?: EntityType[],
   signal?: AbortSignal,
 ): Promise<Result<QueryResponse, WebError>> {
+  const body: { text: string; entity_types?: EntityType[] } = { text };
+  if (entityTypes && entityTypes.length > 0) body.entity_types = entityTypes;
   const res = await send("/api/query", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify(body),
     signal,
   });
   if (res.kind === "err") return res;
